@@ -20,8 +20,10 @@ import {
   DollarSign
 } from 'lucide-react';
 
-const API_BASE = window.location.port === '5173' ? 'http://localhost:5000' : '';
-const WS_BASE = window.location.port === '5173' ? 'ws://localhost:5000' : `ws://${window.location.host}`;
+// Backend URL: set VITE_API_URL in Vercel env vars to point to your Railway backend
+// e.g. VITE_API_URL=https://tss-agent.up.railway.app
+const API_BASE = import.meta.env.VITE_API_URL || (window.location.port === '5173' ? 'http://localhost:5000' : '');
+const WS_BASE = import.meta.env.VITE_WS_URL || (window.location.port === '5173' ? 'ws://localhost:5000' : `ws://${window.location.host}`);
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');

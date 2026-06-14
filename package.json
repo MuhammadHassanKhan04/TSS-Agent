@@ -1,14 +1,18 @@
 {
-  "name": "tss---agent",
+  "name": "tss-agent",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "TSS WhatsApp AI Admission Officer Agent",
+  "main": "server/server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node server/server.js",
-    "build": "cd client && npm run build"
+    "build": "cd client && npm install && npm run build",
+    "dev": "node server/server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["whatsapp", "bot", "admission", "education"],
+  "author": "The Student Space Institute",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
@@ -16,6 +20,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "qrcode": "^1.5.4",
+    "puppeteer": "^22.0.0",
     "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#main",
     "ws": "^8.21.0"
   }
