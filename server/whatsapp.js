@@ -566,15 +566,63 @@ function initWhatsApp() {
                     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
                     replyText = `${greeting}\n\n${getMenu()}`;
 
-                } else if (lowerText === '1') {
-                    // About Institute
-                    replyText = `🏛️ *About The Student Space Institute*\n━━━━━━━━━━━━━━━━━\n\n` +
-                                `*Introduction:* Premier skill training academy offering hands-on professional coaching in IT, AI, design, marketing & academic programs.\n\n` +
+                } else if (lowerText === '1' || lowerText === 'about' || lowerText === 'about us' || lowerText === 'institute') {
+                    // About Institute - Short Menu with options
+                    replyText = `🏛️ *About The Student Space Institute*\n━━━━━━━━━━━━━━━━━\n` +
+                                `Aap kis specific cheez ke baare mein jaanna chahte hain? Please choose:\n\n` +
+                                `1️⃣ *Introduction* (Type *1.1*)\n` +
+                                `2️⃣ *Mission & Vision* (Type *1.2*)\n` +
+                                `3️⃣ *Learning Methodology* (Type *1.3*)\n` +
+                                `4️⃣ *Campus Facilities* (Type *1.4*)\n` +
+                                `5️⃣ *Branch Address & Landmark* (Type *1.5*)\n\n` +
+                                `👉 Option type karein (e.g. *1.1* or *Introduction*).\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '1.1' || lowerText === '11' || lowerText.includes('introduction') || lowerText === 'intro') {
+                    // Intro details
+                    replyText = `🏛️ *Introduction — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `The Student Space is a premier skill training academy offering professional hands-on coaching in IT, AI, design, marketing & academic programs.\n\n` +
+                                `👉 Reply *1* for About options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '1.2' || lowerText === '12' || lowerText.includes('mission') || lowerText.includes('vision')) {
+                    // Mission details
+                    replyText = `🎯 *Mission & Vision — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
                                 `*Mission:* Empowering young minds for tomorrow by building strong, market-ready conceptual foundations.\n\n` +
                                 `*Vision:* Learn • Grow • Succeed — bridging the skill gap between education and industry.\n\n` +
-                                `*Methodology:* Project-based learning, individual mentorship, weekly assessments, portfolio building & lifetime career support.\n\n` +
-                                `*Facilities:* State-of-the-art computer lab, high-speed Wi-Fi, A/C classes, student lounge, online recorded backup sessions.\n\n` +
-                                `📍 W-003 GF, Haroon Royal City, Block 17, Gulistan-e-Johar, Karachi\n📞 0322-1761566\n\nReply *0* for Main Menu`;
+                                `👉 Reply *1* for About options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '1.3' || lowerText === '13' || lowerText.includes('methodology') || lowerText.includes('learning')) {
+                    // Learning Methodology
+                    replyText = `📖 *Learning Methodology*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `• Project-based learning with live hands-on practice.\n` +
+                                `• Individual mentorship and personalized guidance.\n` +
+                                `• Active weekly assessments to track progress.\n` +
+                                `• Professional portfolio building.\n` +
+                                `• Lifetime career support & internship opportunities.\n\n` +
+                                `👉 Reply *1* for About options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '1.4' || lowerText === '14' || lowerText.includes('facilities') || lowerText.includes('lab') || lowerText.includes('wifi')) {
+                    // Facilities details
+                    replyText = `💻 *Campus Facilities — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `• State-of-the-art computer lab with modern systems.\n` +
+                                `• High-speed Wi-Fi internet access.\n` +
+                                `• Fully air-conditioned classrooms.\n` +
+                                `• Student discussion lounge.\n` +
+                                `• Online recorded backup sessions of all classes.\n\n` +
+                                `👉 Reply *1* for About options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '1.5' || lowerText === '15' || lowerText.includes('address') || lowerText.includes('location') || lowerText.includes('landmark')) {
+                    // Location details
+                    replyText = `📍 *Branch Location & Address*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `*Office Address:* W-003, Ground Floor, Haroon Royal City Phase 3, Block 17, Gulistan-e-Johar, Karachi.\n\n` +
+                                `*Landmark:* Near Federal Urdu University / Continental Bakery.\n\n` +
+                                `🗺️ *Google Maps:* https://maps.google.com/?q=The+Student+Space+Gulistan-e-Johar+Karachi\n\n` +
+                                `👉 Reply *1* for About options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
 
                 } else if (lowerText === '2') {
                     // Courses List
