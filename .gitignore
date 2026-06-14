@@ -1,0 +1,30 @@
+# Environment variables (sensitive!)
+.env
+.env.local
+.env.*.local
+
+# WhatsApp session auth (personal session data)
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Node.js
+node_modules/
+client/node_modules/
+
+# Build output
+client/dist/
+
+# Data files (student registrations - private)
+data/registrations/
+data/conversations.json
+data/leads.json
+data/registrations.json
+data/temp_*.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
