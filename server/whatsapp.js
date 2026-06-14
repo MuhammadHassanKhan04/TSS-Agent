@@ -624,58 +624,165 @@ function initWhatsApp() {
                                 `👉 Reply *1* for About options.\n` +
                                 `👉 Reply *0* to return to Main Menu.`;
 
-                } else if (lowerText === '2') {
-                    // Courses List
-                    const { aiTech, career, academic, other } = getGroupedCourses();
+                } else if (lowerText === '2' || lowerText === 'courses' || lowerText === 'programs' || lowerText === 'course' || lowerText === 'program') {
+                    // Courses Sub-menu
+                    replyText = `📚 *Courses & Programs — The Student Space*\n━━━━━━━━━━━━━━━━━\n` +
+                                `Aap kis category ke courses dekhna chahte hain? Please choose:\n\n` +
+                                `1️⃣ *AI & Technology* (Type *2.1*)\n` +
+                                `2️⃣ *Career Programs* (Type *2.2*)\n` +
+                                `3️⃣ *Academic Coaching* (Type *2.3*)\n` +
+                                `4️⃣ *Other Programs* (Type *2.4*)\n\n` +
+                                `👉 Option type karein (e.g. *2.1* or *AI*).\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
 
-                    let listMsg = `📚 *Our Programs*\n━━━━━━━━━━━━━━━━━\n`;
-                    let currentIndex = 1;
+                } else if (lowerText === '2.1' || lowerText === '21' || lowerText === 'ai & technology') {
+                    const { aiTech } = getGroupedCourses();
+                    let msg = `🤖 *AI & Technology Courses*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    aiTech.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *2.1.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *2.1.1*) to get details.\n` +
+                           `👉 Reply *2* for Courses categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
 
-                    if (aiTech.length > 0) {
-                        listMsg += `\n🤖 *AI & Technology:*\n`;
-                        aiTech.forEach(c => {
-                            listMsg += `  ${currentIndex}. ${c.name} (${c.duration})\n`;
-                            currentIndex++;
-                        });
-                    }
-                    if (career.length > 0) {
-                        listMsg += `\n🚀 *Career Programs:*\n`;
-                        career.forEach(c => {
-                            listMsg += `  ${currentIndex}. ${c.name} (${c.duration})\n`;
-                            currentIndex++;
-                        });
-                    }
-                    if (academic.length > 0) {
-                        listMsg += `\n📚 *Academic Coaching:*\n`;
-                        academic.forEach(c => {
-                            listMsg += `  ${currentIndex}. ${c.name} (${c.fee})\n`;
-                            currentIndex++;
-                        });
-                    }
-                    if (other.length > 0) {
-                        listMsg += `\n📖 *Other Programs:*\n`;
-                        other.forEach(c => {
-                            listMsg += `  ${currentIndex}. ${c.name} (${c.duration})\n`;
-                            currentIndex++;
-                        });
-                    }
+                } else if (lowerText === '2.2' || lowerText === '22' || lowerText === 'career programs') {
+                    const { career } = getGroupedCourses();
+                    let msg = `🚀 *Career Programs*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    career.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *2.2.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *2.2.1*) to get details.\n` +
+                           `👉 Reply *2* for Courses categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
 
-                    listMsg += `\n👉 Type any *Course Name* or *Number* to get full details, or reply *3* to start enrollment! 🎓`;
-                    replyText = listMsg;
+                } else if (lowerText === '2.3' || lowerText === '23' || lowerText === 'academic coaching' || lowerText === 'coaching') {
+                    const { academic } = getGroupedCourses();
+                    let msg = `📚 *Academic Coaching Programs*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    academic.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *2.3.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *2.3.1*) to get details.\n` +
+                           `👉 Reply *2* for Courses categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
 
-                } else if (lowerText === '4') {
-                    // Contact Info - Short & Specific
-                    replyText = `📬 *Contact Details — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
-                                `📞 *Phone / WhatsApp:* 0322 1761566\n` +
-                                `📍 *Office Address:* W-003, Ground Floor, Haroon Royal City Phase 3, Block 17, Gulistan-e-Johar, Karachi.\n\n` +
-                                `👉 Aap ko in me se kis detail ki zarurat hai? Aap directly *Map Link*, *Email*, ya *Social Media Links* type karke reply karein, main details send kar dunga! 😊`;
+                } else if (lowerText === '2.4' || lowerText === '24' || lowerText === 'other programs') {
+                    const { other } = getGroupedCourses();
+                    let msg = `📖 *Other Programs*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    other.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *2.4.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *2.4.1*) to get details.\n` +
+                           `👉 Reply *2* for Courses categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
 
-                } else if (lowerText === '5') {
-                    // Fee Details - Short & Specific Prompt
-                    replyText = `💰 *Fee Details — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
-                                `Humare paas different courses ki different fee structures aur monthly installment plans available hain.\n\n` +
-                                `👉 Aap ko kis specific course ki fees aur details chahiye? Please course ka naam likh kar replay karein (e.g. *Generative AI*, *Web Development*, *Agentic AI*, *YouTube Automation*, ya *Grade 9 Coaching*).\n\n` +
-                                `Main aap ko us specific course ki exact fee structure send kar dunga! 😊`;
+                } else if (lowerText === '4' || lowerText === 'contact' || lowerText === 'phone' || lowerText === 'email' || lowerText === 'address') {
+                    // Contact Info Sub-menu
+                    replyText = `📬 *Contact Information — The Student Space*\n━━━━━━━━━━━━━━━━━\n` +
+                                `Aap ko kaunsi contact details chahiye? Please choose:\n\n` +
+                                `1️⃣ *Phone Number* (Type *4.1*)\n` +
+                                `2️⃣ *WhatsApp Number* (Type *4.2*)\n` +
+                                `3️⃣ *Email Address* (Type *4.3*)\n` +
+                                `4️⃣ *Office Address & Landmark* (Type *4.4*)\n` +
+                                `5️⃣ *Social Media Links* (Type *4.5*)\n\n` +
+                                `👉 Option type karein (e.g. *4.1* or *WhatsApp*).\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '4.1' || lowerText === '41' || lowerText === 'phone number') {
+                    replyText = `📞 *Phone Number — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `Aap humein is number par call kar sakte hain:\n` +
+                                `👉 *0322 1761566*\n\n` +
+                                `👉 Reply *4* for other Contact options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '4.2' || lowerText === '42' || lowerText === 'whatsapp number') {
+                    replyText = `💬 *WhatsApp — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `Aap is official WhatsApp chat par message kar sakte hain:\n` +
+                                `👉 *0322 1761566*\n\n` +
+                                `👉 Reply *4* for other Contact options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '4.3' || lowerText === '43' || lowerText === 'email address') {
+                    replyText = `✉️ *Email Address — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `Aap humein email send kar sakte hain:\n` +
+                                `👉 *info@thestudentspace.com*\n\n` +
+                                `👉 Reply *4* for other Contact options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '4.4' || lowerText === '44' || lowerText === 'office address') {
+                    replyText = `📍 *Office Address — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `*Address:* W-003, Ground Floor, Haroon Royal City Phase 3, Block 17, Gulistan-e-Johar, Karachi.\n\n` +
+                                `*Landmark:* Near Federal Urdu University / Continental Bakery.\n` +
+                                `🗺️ *Google Maps:* https://maps.google.com/?q=The+Student+Space+Gulistan-e-Johar+Karachi\n\n` +
+                                `👉 Reply *4* for other Contact options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '4.5' || lowerText === '45' || lowerText === 'social media') {
+                    replyText = `🌐 *Social Media Links — The Student Space*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                `Humare social channels follow/visit karein:\n` +
+                                `• *Facebook:* https://facebook.com/thestudentspace\n` +
+                                `• *Instagram:* https://instagram.com/thestudentspace\n` +
+                                `• *LinkedIn:* https://linkedin.com/company/thestudentspace\n\n` +
+                                `👉 Reply *4* for other Contact options.\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '5' || lowerText === 'fee' || lowerText === 'fees' || lowerText === 'charges') {
+                    // Fee Details Sub-menu
+                    replyText = `💰 *Fee Structures — The Student Space*\n━━━━━━━━━━━━━━━━━\n` +
+                                `Aap kis category ke courses ki fees check karna chahte hain? Please choose:\n\n` +
+                                `1️⃣ *AI & Technology Fees* (Type *5.1*)\n` +
+                                `2️⃣ *Career Programs Fees* (Type *5.2*)\n` +
+                                `3️⃣ *Academic Coaching Fees* (Type *5.3*)\n` +
+                                `4️⃣ *Other Programs Fees* (Type *5.4*)\n\n` +
+                                `👉 Option type karein (e.g. *5.1* or *Fees*).\n` +
+                                `👉 Reply *0* to return to Main Menu.`;
+
+                } else if (lowerText === '5.1' || lowerText === '51') {
+                    const { aiTech } = getGroupedCourses();
+                    let msg = `💰 *AI & Technology — Fee Structure*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    aiTech.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *5.1.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *5.1.1*) to see fees.\n` +
+                           `👉 Reply *5* for Fee categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
+
+                } else if (lowerText === '5.2' || lowerText === '52') {
+                    const { career } = getGroupedCourses();
+                    let msg = `🚀 *Career Programs — Fee Structure*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    career.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *5.2.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *5.2.1*) to see fees.\n` +
+                           `👉 Reply *5* for Fee categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
+
+                } else if (lowerText === '5.3' || lowerText === '53') {
+                    const { academic } = getGroupedCourses();
+                    let msg = `📚 *Academic Coaching — Fee Structure*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    academic.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *5.3.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *5.3.1*) to see fees.\n` +
+                           `👉 Reply *5* for Fee categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
+
+                } else if (lowerText === '5.4' || lowerText === '54') {
+                    const { other } = getGroupedCourses();
+                    let msg = `📖 *Other Programs — Fee Structure*\n━━━━━━━━━━━━━━━━━\n\n`;
+                    other.forEach((c, idx) => {
+                        msg += `${idx + 1}️⃣ *${c.name}* (Type *5.4.${idx + 1}*)\n`;
+                    });
+                    msg += `\n👉 Option type karein (e.g. *5.4.1*) to see fees.\n` +
+                           `👉 Reply *5* for Fee categories.\n` +
+                           `👉 Reply *0* to return to Main Menu.`;
+                    replyText = msg;
 
                 } else if (conv && conv.registrationStatus === 'Lead_Escalation') {
                     // Lead data captured
@@ -690,43 +797,110 @@ function initWhatsApp() {
                     });
                     replyText = `✅ Thank you! We have saved your request. An admission representative will contact you very shortly on *${text}*. 📞`;
                 } else {
-                    // Check if they are asking about a specific course name or number
-                    const ordered = getOrderedCourses();
+                    // Check if they are asking about a specific course via hierarchical sub-option (e.g. 2.1.1 or 211)
                     const cleanText = text.trim();
-                    const num = parseInt(cleanText, 10);
+                    const cleanInput = cleanText.replace(/[^0-9]/g, '');
                     let matchedCourse = null;
+                    let isFeeDetailsQuery = false;
+                    let parentCategoryIdx = null;
 
-                    if (!isNaN(num) && num > 0 && num <= ordered.length) {
-                        matchedCourse = ordered[num - 1];
-                    } else {
-                        matchedCourse = ordered.find(c => {
-                            const cName = c.name.toLowerCase();
-                            return lowerText === cName || 
-                                   lowerText === `${cName} details` || 
-                                   lowerText === `${cName} fee` || 
-                                   lowerText === `${cName} fees` || 
-                                   lowerText === `details of ${cName}` || 
-                                   lowerText === `fee of ${cName}`;
-                        });
+                    if (cleanInput.length === 3 && (cleanInput.startsWith('2') || cleanInput.startsWith('5'))) {
+                        const actionType = cleanInput[0]; // '2' or '5'
+                        const catIdx = parseInt(cleanInput[1], 10); // 1 = aiTech, 2 = career, 3 = academic, 4 = other
+                        const courseIdx = parseInt(cleanInput[2], 10) - 1;
+                        parentCategoryIdx = catIdx;
+
+                        const { aiTech, career, academic, other } = getGroupedCourses();
+                        let selectedList = [];
+                        if (catIdx === 1) selectedList = aiTech;
+                        else if (catIdx === 2) selectedList = career;
+                        else if (catIdx === 3) selectedList = academic;
+                        else if (catIdx === 4) selectedList = other;
+
+                        if (courseIdx >= 0 && courseIdx < selectedList.length) {
+                            matchedCourse = selectedList[courseIdx];
+                            if (actionType === '5') {
+                                isFeeDetailsQuery = true;
+                            }
+                        }
+                    } else if (cleanText.includes('.')) {
+                        const parts = cleanText.split('.');
+                        if (parts.length === 3 && (parts[0] === '2' || parts[0] === '5')) {
+                            const actionType = parts[0];
+                            const catIdx = parseInt(parts[1], 10);
+                            const courseIdx = parseInt(parts[2], 10) - 1;
+                            parentCategoryIdx = catIdx;
+
+                            const { aiTech, career, academic, other } = getGroupedCourses();
+                            let selectedList = [];
+                            if (catIdx === 1) selectedList = aiTech;
+                            else if (catIdx === 2) selectedList = career;
+                            else if (catIdx === 3) selectedList = academic;
+                            else if (catIdx === 4) selectedList = other;
+
+                            if (courseIdx >= 0 && courseIdx < selectedList.length) {
+                                matchedCourse = selectedList[courseIdx];
+                                if (actionType === '5') {
+                                    isFeeDetailsQuery = true;
+                                }
+                            }
+                        }
                     }
 
                     if (matchedCourse) {
-                        replyText = `📚 *${matchedCourse.name}*
-━━━━━━━━━━━━━━━━━━━━━━━━
-📖 *Description:* ${matchedCourse.description}
-
-⏱️ *Duration:* ${matchedCourse.duration}
-💰 *Total Fee:* ${matchedCourse.fee}
-💳 *Installment:* ${matchedCourse.installment}
-📅 *Schedule:* ${matchedCourse.schedule}
-💼 *Career Opportunities:* ${matchedCourse.careerOpportunities}
-
-━━━━━━━━━━━━━━━━━━━━━━━━
-👉 To enroll in this course, reply with *3* or *Apply*.
-👉 Reply *0* to return to the Main Menu.`;
+                        if (isFeeDetailsQuery) {
+                            replyText = `💰 *${matchedCourse.name} — Fee Structure*\n━━━━━━━━━━━━━━━━━\n\n` +
+                                        `💵 *Total Course Fee:* ${matchedCourse.fee}\n` +
+                                        `💳 *Monthly Installment:* ${matchedCourse.installment}\n` +
+                                        `⏱️ *Duration:* ${matchedCourse.duration}\n\n` +
+                                        `👉 Reply *5.${parentCategoryIdx}* for this category's fees.\n` +
+                                        `👉 Reply *0* to return to Main Menu.`;
+                        } else {
+                            replyText = `📚 *${matchedCourse.name}*\n━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                        `📖 *Description:* ${matchedCourse.description}\n\n` +
+                                        `⏱️ *Duration:* ${matchedCourse.duration}\n` +
+                                        `💰 *Total Fee:* ${matchedCourse.fee}\n` +
+                                        `💳 *Installment:* ${matchedCourse.installment}\n` +
+                                        `📅 *Schedule:* ${matchedCourse.schedule}\n` +
+                                        `💼 *Career Opportunities:* ${matchedCourse.careerOpportunities}\n\n` +
+                                        `👉 Reply *2.${parentCategoryIdx}* for this category's list.\n` +
+                                        `👉 Reply *3* or *Apply* to Enroll in this course.\n` +
+                                        `👉 Reply *0* to return to the Main Menu.`;
+                        }
                     } else {
-                        // Fallback: Let Gemini AI handle the query
-                        replyText = await getAIResponse(text, chatHistory, conv);
+                        // Otherwise, match by course name or index number (Option 2 fallback / search)
+                        const ordered = getOrderedCourses();
+                        const num = parseInt(cleanText, 10);
+                        let matchedCourseSearch = null;
+
+                        if (!isNaN(num) && num > 0 && num <= ordered.length) {
+                            matchedCourseSearch = ordered[num - 1];
+                        } else {
+                            matchedCourseSearch = ordered.find(c => {
+                                const cName = c.name.toLowerCase();
+                                return lowerText === cName || 
+                                       lowerText === `${cName} details` || 
+                                       lowerText === `${cName} fee` || 
+                                       lowerText === `${cName} fees` || 
+                                       lowerText === `details of ${cName}` || 
+                                       lowerText === `fee of ${cName}`;
+                            });
+                        }
+
+                        if (matchedCourseSearch) {
+                            replyText = `📚 *${matchedCourseSearch.name}*\n━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                                        `📖 *Description:* ${matchedCourseSearch.description}\n\n` +
+                                        `⏱️ *Duration:* ${matchedCourseSearch.duration}\n` +
+                                        `💰 *Total Fee:* ${matchedCourseSearch.fee}\n` +
+                                        `💳 *Installment:* ${matchedCourseSearch.installment}\n` +
+                                        `📅 *Schedule:* ${matchedCourseSearch.schedule}\n` +
+                                        `💼 *Career Opportunities:* ${matchedCourseSearch.careerOpportunities}\n\n` +
+                                        `👉 To enroll in this course, reply with *3* or *Apply*.\n` +
+                                        `👉 Reply *0* to return to the Main Menu.`;
+                        } else {
+                            // Fallback: Let Gemini AI handle the query
+                            replyText = await getAIResponse(text, chatHistory, conv);
+                        }
                     }
                 }
             }
