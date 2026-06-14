@@ -41,8 +41,100 @@ function broadcast(type, data) {
     }
 }
 
-// 26 Admission Fields
-const ADMISSION_FIELDS = [
+// Helper: Group courses by category dynamically
+function getGroupedCourses() {
+    const courses = db.getCourses();
+    const aiTech = [];
+    const career = [];
+    const academic = [];
+    const other = [];
+
+    courses.forEach(c => {
+        const nameLower = c.name.toLowerCase();
+        if (
+            nameLower.includes('ai') || 
+            nameLower.includes('development') || 
+            nameLower.includes('design') || 
+            nameLower.includes('marketing') || 
+            nameLower.includes('amazon') || 
+            nameLower.includes('animation') ||
+            nameLower.includes('youtube')
+        ) {
+            aiTech.push(c);
+        } else if (
+            nameLower.includes('freelancing') || 
+            nameLower.includes('computer') || 
+            nameLower.includes('office') || 
+            nameLower.includes('programming') || 
+            nameLower.includes('tools') ||
+            nameLower.includes('fundamentals')
+        ) {
+            career.push(c);
+        } else if (
+            nameLower.includes('grade') || 
+            nameLower.includes('coaching') || 
+            nameLower.includes('class') || 
+            nameLower.includes('school')
+        ) {
+            academic.push(c);
+        } else {
+            other.push(c);
+        }
+    });
+
+    return { aiTech, career, academic, other };
+}
+
+// Helper: Get all active courses in a flat array, ordered by category
+function getOrderedCourses() {
+    const { aiTech, career, academic, other } = getGroupedCourses();
+    return [...aiTech, ...career, ...academic, ...other];
+}
+
+// Helper: Build course prompt dynamically from live DB
+function buildCoursePrompt() {
+    const { aiTech, career, academic, other } = getGroupedCourses();
+
+    let prompt = `Aap kis course mein interested hain? Neeche se course ka *Naam* ya *Number* type karein:\n`;
+
+    let currentIndex = 1;
+
+    if (aiTech.length > 0) {
+        prompt += `\n🤖 *AI & Technology:*\n`;
+        aiTech.forEach(c => {
+            prompt += `  ${currentIndex}. ${c.name} (${c.duration}, ${c.fee})\n`;
+            currentIndex++;
+        });
+    }
+    if (career.length > 0) {
+        prompt += `\n🚀 *Career Programs:*\n`;
+        career.forEach(c => {
+            prompt += `  ${currentIndex}. ${c.name} (${c.duration}, ${c.fee})\n`;
+            currentIndex++;
+        });
+    }
+    if (academic.length > 0) {
+        prompt += `\n📚 *Academic Coaching:*\n`;
+        academic.forEach(c => {
+            prompt += `  ${currentIndex}. ${c.name} (${c.fee})\n`;
+            currentIndex++;
+        });
+    }
+    if (other.length > 0) {
+        prompt += `\n📖 *Other Programs:*\n`;
+        other.forEach(c => {
+            prompt += `  ${currentIndex}. ${c.name} (${c.duration}, ${c.fee})\n`;
+            currentIndex++;
+        });
+    }
+
+    prompt += `\n👉 *Course ka Naam ya Number type karein (e.g. 1 or Generative AI):*`;
+    return prompt;
+}
+
+// Admission Fields — now a FUNCTION so course list is always live from DB
+function getAdmissionFields() {
+  return [
     { key: 'fullName', label: 'Full Name', prompt: 'Please provide your Full Name:' },
     { key: 'fatherName', label: "Father's Name", prompt: "Please enter your Father's Name:" },
     { 
@@ -112,16 +204,31 @@ const ADMISSION_FIELDS = [
     { 
         key: 'course', 
         label: 'Interested Course', 
-        prompt: 'Which course are you interested in?\n\n🤖 *AI & Technology:*\n- Generative AI\n- Agentic AI\n- Web Development\n- App Development\n- Graphic Designing\n- Digital Marketing\n- YouTube Automation\n- Amazon FBA\n- 3D Animation\n\n🚀 *Career Programs:*\n- Freelancing Masterclass\n- Computer Fundamentals\n- Office Automation (MS Office)\n- Programming for Beginners\n- AI Tools for Students\n\n📚 *Academic Coaching:*\n- Grade 5 to 10 Coaching\n\n👉 *Please type the course name:*',
+        // prompt is a function — always reads live courses from admin dashboard
+        get prompt() { return buildCoursePrompt(); },
         validate: (val) => {
-            const courses = db.getCourses();
-            const matched = courses.find(c => c.name.toLowerCase().includes(val.toLowerCase()) || val.toLowerCase().includes(c.name.toLowerCase()));
+            const cleanVal = val.trim();
+            const num = parseInt(cleanVal, 10);
+            const ordered = getOrderedCourses();
+            
+            if (!isNaN(num) && num > 0 && num <= ordered.length) {
+                return true;
+            }
+            
+            const matched = ordered.find(c => c.name.toLowerCase().includes(cleanVal.toLowerCase()) || cleanVal.toLowerCase().includes(c.name.toLowerCase()));
             return matched !== undefined;
         },
         format: (val) => {
-            const courses = db.getCourses();
-            const matched = courses.find(c => c.name.toLowerCase().includes(val.toLowerCase()) || val.toLowerCase().includes(c.name.toLowerCase()));
-            return matched.name;
+            const cleanVal = val.trim();
+            const num = parseInt(cleanVal, 10);
+            const ordered = getOrderedCourses();
+            
+            if (!isNaN(num) && num > 0 && num <= ordered.length) {
+                return ordered[num - 1].name;
+            }
+            
+            const matched = ordered.find(c => c.name.toLowerCase().includes(cleanVal.toLowerCase()) || cleanVal.toLowerCase().includes(c.name.toLowerCase()));
+            return matched ? matched.name : cleanVal;
         }
     },
     { 
@@ -150,7 +257,8 @@ const ADMISSION_FIELDS = [
         format: (val) => val.trim().toLowerCase() === 'none' ? 'None' : val.trim()
     },
     { key: 'emergencyAddress', label: 'Emergency Address', prompt: 'Please enter the Address of your emergency contact:' }
-];
+  ];
+}
 
 const GREETINGS = [
     "Welcome to The Student Space Institute. How may I assist you today? 📚",
@@ -392,8 +500,9 @@ function initWhatsApp() {
             let triggerFormGen = false;
 
             // 1. Check if user is currently inside the step-by-step admission collection workflow
-            if (regStatus === 'Active' && activeStep >= 0 && activeStep < ADMISSION_FIELDS.length) {
-                const currentField = ADMISSION_FIELDS[activeStep];
+            const FIELDS = getAdmissionFields(); // always fresh from DB
+            if (regStatus === 'Active' && activeStep >= 0 && activeStep < FIELDS.length) {
+                const currentField = FIELDS[activeStep];
                 let isValid = true;
                 
                 // Validate if field has a custom validator
@@ -410,13 +519,13 @@ function initWhatsApp() {
                     
                     const nextStep = activeStep + 1;
                     
-                    if (nextStep < ADMISSION_FIELDS.length) {
+                    if (nextStep < FIELDS.length) {
                         // Move to next field
                         db.updateConversationStatus(phone, {
                             activeStep: nextStep,
                             collectedData
                         });
-                        replyText = `✅ Saved ${currentField.label}.\n\n👉 ${ADMISSION_FIELDS[nextStep].prompt}`;
+                        replyText = `✅ Saved ${currentField.label}.\n\n👉 ${FIELDS[nextStep].prompt}`;
                     } else {
                         // All fields collected!
                         db.updateConversationStatus(phone, {
@@ -451,7 +560,7 @@ function initWhatsApp() {
                         activeStep: 0,
                         collectedData: {}
                     });
-                    replyText = `📝 *TSS Admission Registration Process*\n\nI will guide you step-by-step to fill the registration form. Please answer each question carefully.\n\n👉 ${ADMISSION_FIELDS[0].prompt}`;
+                    replyText = `📝 *TSS Admission Registration Process*\n\nMain aap ko step-by-step registration form fill karwaunga. Har sawaal ka jawab dhyan se dein.\n\n👉 ${getAdmissionFields()[0].prompt}`;
                 } else if (['menu', 'help', 'hi', 'hello', 'start', 'salam', 'السلام', 'assalam', 'hey'].some(w => lowerText.includes(w)) || lowerText === '0') {
                     // Send greeting + Menu
                     const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
@@ -469,16 +578,42 @@ function initWhatsApp() {
 
                 } else if (lowerText === '2') {
                     // Courses List
-                    const courses = db.getCourses();
-                    const aiTech = courses.filter(c => ['Generative AI','Agentic AI','Web Development','App Development','Graphic Designing','Digital Marketing','YouTube Automation','Amazon FBA','3D Animation'].includes(c.name));
-                    const career = courses.filter(c => ['Freelancing Masterclass','Computer Fundamentals','Office Automation (MS Office)','Programming for Beginners','AI Tools for Students'].includes(c.name));
-                    const academic = courses.filter(c => c.name.startsWith('Grade'));
+                    const { aiTech, career, academic, other } = getGroupedCourses();
 
-                    replyText = `📚 *Our Programs*\n━━━━━━━━━━━━━━━━━\n\n` +
-                                `🤖 *AI & Technology*\n` + aiTech.map((c,i) => `  ${i+1}. ${c.name} (${c.duration})`).join('\n') +
-                                `\n\n🚀 *Career Programs*\n` + career.map((c,i) => `  ${i+1}. ${c.name} (${c.duration})`).join('\n') +
-                                `\n\n📖 *Academic Coaching*\n` + academic.map((c,i) => `  ${i+1}. ${c.name} (${c.fee})`).join('\n') +
-                                `\n\nType any *course name* to get full details, or reply *3* to start enrollment! 🎓`;
+                    let listMsg = `📚 *Our Programs*\n━━━━━━━━━━━━━━━━━\n`;
+                    let currentIndex = 1;
+
+                    if (aiTech.length > 0) {
+                        listMsg += `\n🤖 *AI & Technology:*\n`;
+                        aiTech.forEach(c => {
+                            listMsg += `  ${currentIndex}. ${c.name} (${c.duration})\n`;
+                            currentIndex++;
+                        });
+                    }
+                    if (career.length > 0) {
+                        listMsg += `\n🚀 *Career Programs:*\n`;
+                        career.forEach(c => {
+                            listMsg += `  ${currentIndex}. ${c.name} (${c.duration})\n`;
+                            currentIndex++;
+                        });
+                    }
+                    if (academic.length > 0) {
+                        listMsg += `\n📚 *Academic Coaching:*\n`;
+                        academic.forEach(c => {
+                            listMsg += `  ${currentIndex}. ${c.name} (${c.fee})\n`;
+                            currentIndex++;
+                        });
+                    }
+                    if (other.length > 0) {
+                        listMsg += `\n📖 *Other Programs:*\n`;
+                        other.forEach(c => {
+                            listMsg += `  ${currentIndex}. ${c.name} (${c.duration})\n`;
+                            currentIndex++;
+                        });
+                    }
+
+                    listMsg += `\n👉 Type any *Course Name* or *Number* to get full details, or reply *3* to start enrollment! 🎓`;
+                    replyText = listMsg;
 
                 } else if (lowerText === '4') {
                     // Contact Info - Short & Specific
@@ -507,8 +642,44 @@ function initWhatsApp() {
                     });
                     replyText = `✅ Thank you! We have saved your request. An admission representative will contact you very shortly on *${text}*. 📞`;
                 } else {
-                    // Fallback: Let Gemini AI handle the query
-                    replyText = await getAIResponse(text, chatHistory, conv);
+                    // Check if they are asking about a specific course name or number
+                    const ordered = getOrderedCourses();
+                    const cleanText = text.trim();
+                    const num = parseInt(cleanText, 10);
+                    let matchedCourse = null;
+
+                    if (!isNaN(num) && num > 0 && num <= ordered.length) {
+                        matchedCourse = ordered[num - 1];
+                    } else {
+                        matchedCourse = ordered.find(c => {
+                            const cName = c.name.toLowerCase();
+                            return lowerText === cName || 
+                                   lowerText === `${cName} details` || 
+                                   lowerText === `${cName} fee` || 
+                                   lowerText === `${cName} fees` || 
+                                   lowerText === `details of ${cName}` || 
+                                   lowerText === `fee of ${cName}`;
+                        });
+                    }
+
+                    if (matchedCourse) {
+                        replyText = `📚 *${matchedCourse.name}*
+━━━━━━━━━━━━━━━━━━━━━━━━
+📖 *Description:* ${matchedCourse.description}
+
+⏱️ *Duration:* ${matchedCourse.duration}
+💰 *Total Fee:* ${matchedCourse.fee}
+💳 *Installment:* ${matchedCourse.installment}
+📅 *Schedule:* ${matchedCourse.schedule}
+💼 *Career Opportunities:* ${matchedCourse.careerOpportunities}
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+👉 To enroll in this course, reply with *3* or *Apply*.
+👉 Reply *0* to return to the Main Menu.`;
+                    } else {
+                        // Fallback: Let Gemini AI handle the query
+                        replyText = await getAIResponse(text, chatHistory, conv);
+                    }
                 }
             }
 
